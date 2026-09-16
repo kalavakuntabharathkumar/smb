@@ -1,11 +1,8 @@
 # LLM Evaluation Platform
 
-A platform for the full LLM lifecycle: supervised fine-tuning with LoRA →
-DPO alignment → post-training quantisation → multi-backend serving benchmark →
-evaluation. The FastAPI backend and Streamlit dashboard run on a standard
-Linux machine or in Docker; GPU-intensive training stages (SFT, DPO,
-quantisation) ran on a free-tier Colab/Kaggle GPU and the resulting
-checkpoints are loaded here for serving and evaluation.
+**Project duration:** July 27, 2026 – August 12, 2026
+
+A platform for the full LLM lifecycle: supervised fine-tuning with LoRA → DPO alignment → post-training quantisation → multi-backend serving benchmark → evaluation. The FastAPI backend and Streamlit dashboard run on Linux or Docker; GPU-intensive training stages can be run on a Colab/Kaggle GPU.
 
 ## Stack
 
@@ -14,62 +11,39 @@ checkpoints are loaded here for serving and evaluation.
 | Backend | FastAPI |
 | Frontend | Streamlit |
 | Fine-tuning | PyTorch + PEFT (LoRA) |
-| Alignment | trl DPOTrainer |
+| Alignment | TRL DPOTrainer |
 | Quantisation | AutoAWQ / AutoGPTQ |
 | Serving | vLLM · HuggingFace TGI · llama.cpp |
-| Experiment tracking | Weights & Biases |
-| Evaluation | DistilBERT classifier · scikit-learn · scipy |
+| Evaluation | scikit-learn · scipy · pandas |
 
----
+## Pipeline
 
-## Pipeline overview
-
-```
-Dataset
-  │
-  ▼
-LoRA SFT  ──────────────────────────────────────► W&B (project: llm-sft)
-  │   training/lora_finetune.py
-  │   training/train_loop.py  (raw PyTorch loop)
-  ▼
-DPO alignment ─────────────────────────────────► W&B (project: llm-dpo)
-  │   training/dpo_train.py
-  ▼
-Quantisation
-  │   training/quantize.py
-  ▼
-Serving benchmark
-  │   training/serving_benchmark.py
-  ▼
-Evaluation pipeline
-  │   evaluation/pipeline.py
-  ▼
-FastAPI + Streamlit dashboard
+```text
+Dataset → LoRA SFT → DPO alignment → Quantisation → Serving benchmark → Evaluation
+                                      ↓
+                               FastAPI + Streamlit
 ```
 
-## Project structure
+## Structure
 
-- `backend/` FastAPI API and LLM service layer
-- `evaluation/` feature engineering, metrics, statistics, tuning, and evaluation pipeline
-- `training/` LoRA, DPO, quantisation, and serving benchmark utilities
-- `datasets/` evaluation and safety datasets
-- `frontend/` Streamlit dashboard
-- `tests/` basic and pipeline tests
-- `configs/` runtime configuration
+- `backend/` — FastAPI routes and LLM service layer
+- `evaluation/` — feature engineering, metrics and statistical analysis
+- `training/` — LoRA, DPO, quantisation and serving benchmark utilities
+- `datasets/` — evaluation and safety datasets
+- `frontend/` — Streamlit dashboard
+- `tests/` — automated smoke tests
 
-## Running locally
-
-Install dependencies and run the API:
+## Run locally
 
 ```bash
 pip install -r requirements.txt
 uvicorn backend.main:app --reload
 ```
 
-Run the dashboard separately:
+In another terminal:
 
 ```bash
 streamlit run frontend/app.py
 ```
 
-Docker is also supported through `docker-compose.yml`.
+Docker support is provided through `Dockerfile` and `docker-compose.yml`.
