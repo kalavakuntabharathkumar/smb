@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+streamlit
+pydantic
+requests
+numpy
+pandas
+scikit-learn
+scipy
+pytest
+transformers
+datasets
+peft
+trl
+torch
+wandb
